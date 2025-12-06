@@ -1,8 +1,9 @@
+using System;
 using UnityEngine;
 
 public class Switch : MonoBehaviour
 {
-    public bool isActive = false;
+    [NonSerialized] public bool isActive = false;
     
     public void Toggle()
     {
