@@ -1,16 +1,46 @@
+using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class KillZone : MonoBehaviour
 {
-    private void OnTriggerEnter2D(Collider2D other)
+    public bool activateOther;
+
+    [SerializeField] KillZone otherKillZone;
+    [SerializeField] GameObject laser;
+
+    private void Start()
     {
         
-        if (other.CompareTag("Player"))
+    }
+
+    private void Update()
+    {
+        if (otherKillZone.activateOther)
         {
-            
-            Scene currentScene = SceneManager.GetActiveScene();
-            SceneManager.LoadScene(currentScene.buildIndex);
+            ActivateLaser();
         }
+        else{
+            laser.SetActive(false);
+        }
+    }
+
+    void ToggleLaser()
+    {
+        otherKillZone.activateOther = false;
+        activateOther = true;
+        laser.SetActive(false);
+    }
+
+    void ActivateLaser()
+    {
+        activateOther = false;
+        laser.SetActive(true);
+        StartTimer();
+    }
+
+    void StartTimer()
+    {
+        Invoke("ToggleLaser", 2.5f);
     }
 }
