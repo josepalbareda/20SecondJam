@@ -5,25 +5,28 @@ public class OvilloLana : MonoBehaviour
     public float shrinkRate = 0.003f;
     public float minScale = 0.05f;
 
-    private TrailRenderer trail;
+    public TrailRenderer trail;   // <- referencia al TrailRenderer del hijo (YarnTrail)
     private bool active = false;
 
     private void Start()
     {
-        trail = GetComponent<TrailRenderer>();
+        // Si no lo arrastras manualmente en el inspector, puedes hacer:
+        if (trail == null)
+        {
+            trail = GetComponentInChildren<TrailRenderer>();
+        }
+
         trail.emitting = false;
-        trail.time = Mathf.Infinity; // el trail no desaparece jamás
+        trail.time = Mathf.Infinity; // la lana no desaparece por tiempo
     }
 
     private void Update()
     {
         if (!active) return;
 
-        // Reducir tamaño del ovillo
         float shrinkAmount = shrinkRate * Time.deltaTime;
         transform.localScale -= new Vector3(shrinkAmount, shrinkAmount, 0f);
 
-        // Cuando ya no quede lana...
         if (transform.localScale.x <= minScale)
         {
             LeaveTrailForever();
@@ -41,16 +44,16 @@ public class OvilloLana : MonoBehaviour
 
     void LeaveTrailForever()
     {
-        // 1. Desvincular el trail del ovillo
-        trail.transform.parent = null;
+        // 1. Desparentar el objeto que TIENE el TrailRenderer
+        trail.transform.SetParent(null);   // ahora es independiente
 
-        // 2. Dejar de emitir nueva lana
+        // 2. Parar de emitir nueva lana
         trail.emitting = false;
 
-        // 3. Asegurar que permanece en la escena
+        // 3. Asegurar que el trail se queda
         trail.time = Mathf.Infinity;
 
-        // 4. Destruir el ovillo PERO NO el trail
+        // 4. Destruir SOLO el ovillo (este GameObject)
         Destroy(gameObject);
     }
 }
